@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Post | Forum </title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/blog/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/statics/styles/index.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta name="theme-color" content="#563d7c">
+
+    <!-- Custom styles for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header class="blog-header py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="col-4">
+                <a class="blog-header-logo text-dark" href="/">Forum</a>
+            </div>
+            <div class="col-4 d-flex justify-content-end align-items-center">
+                {{if .LoggedIn}}
+                Hello, <a class="p-2 text-dark" href="/profile">{{.UserData.Username}}</a>
+                {{else}}
+                <a class="btn btn-sm btn-outline-secondary" href="/login">Login</a>
+                {{end}}
+            </div>
+            </div>
+        </header>
+    </div>
+
+    <div>
+        <div class="container fullscreen">
+            <div class="row">
+                <div class="blog-post col">
+                    <h2 class="blog-post-title">{{.CurrPost.Title}}</h2>
+                    <div class="d-inline-block">
+                        {{range $index, $category := .CurrPost.Categories}}
+                        <a href="/category/{{$category.ID}}"><span class="badge badge-pill badge-primary">{{$category.Name}}</span></a>
+                        {{end}}
+                    </div>
+                    <p class="blog-post-meta">{{.CurrPost.Timestamp}} by <a href="/user/{{.CurrPost.Author}}">{{.CurrPost.AuthorName}}</a></p>
+                    <p class="blog-post-likes">
+                        {{if .UserLiked}}
+                        <div class="one-png liked">
+                            <img class="png" id ="like-click" src="/statics/images/like.png" alt="Like button">
+                            {{.Likes}}
+                        </div>
+                        {{else}}
+                        <div class="one-png">
+                            <img class="png" id ="like-click" src="/statics/images/like.png" alt="Like button">                                
+                            {{.Likes}}
+                        </div>
+                        {{end}}
+
+                        {{if .UserDisliked}}
+                        <div class="one-png disliked">
+                            <img class="png" id ="dislike-click" src="/statics/images/dislike.png" alt="Like button">                                
+                            {{.Dislikes}}
+                        </div>
+                        {{else}}
+                        <div class="one-png">
+                            <img class="png" id ="dislike-click" src="/statics/images/dislike.png" alt="Like button">                                
+                            {{.Dislikes}}
+                        </div>
+                        {{end}}
+                    </p>
+
+                    <p class="content">{{.CurrPost.Content}}</p>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div>
+                <h1 class="h3 mb-3 text-top">Comments</h1>
+                    {{range $index, $comment := .Comments}}
+                    <div class="container one-comment">
+                        <div class="row">
+                            <div class="col-sm-2 likes-dislikes">
+                                {{if $comment.UserLiked}}
+                                <div class="one-png liked">
+                                    <img class="png like-comment-btn"  src="/statics/images/like.png" alt="Like button" comment="{{$comment.ID}}">                                
+                                </div>
+                                {{else}}
+                                <div class="one-png">
+                                    <img class="png like-comment-btn"  src="/statics/images/like.png" alt="Like button" comment="{{$comment.ID}}">                                
+                                </div>
+                                {{end}}
+
+                                {{$comment.Likes}}
+
+                                {{if $comment.UserDisliked}}
+                                <div class="one-png disliked">
+                                    <img class="png dislike-comment-btn" src="/statics/images/dislike.png" alt="Like button" comment="{{$comment.ID}}">                                
+                                </div>
+                                {{else}}
+                                <div class="one-png">
+                                    <img class="png dislike-comment-btn" src="/statics/images/dislike.png" alt="Like button" comment="{{$comment.ID}}">                                
+                                </div>
+                                {{end}}
+                            </div>
+                            <div class="col-sm-10 comment">
+                                <p class="author">
+                                    <a href="/user/{{$comment.Author}}" style="text-decoration: none;">
+                                        {{$comment.AuthorName}}
+                                    </a>
+                                </p>
+                                <p class="time">{{$comment.Timestamp}}</p>
+                                <p>{{$comment.Text}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+            </div>
+
+            <hr/>
+
+            {{if .LoggedIn}}
+            <div class="my-comment">
+                <form class="form" action="/post/{{.CurrPost.ID}}" method="post" id="add-comment-form">
+                    <div class="form-group">
+                    <h1 class="h3 mb-3 text-top">Write your comment</h1>
+
+                    <textarea class="form-control" id="comment" rows="5" placeholder="Text of the comment" name="comment"></textarea>
+                    </div>
+                    <p class="error-text" id="errorText"></p>
+
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Add Comment</button>
+                </form>
+            </div>
+            {{else}}
+            <h1 class="h3 mb-3 text-top">Login to Write Your Comment</h1>
+            {{end}}
+            
+        </div>
+
+    </div>
+
+    <div id="post-id" style="display: none;">{{.CurrPost.ID}}</div>
+
+<footer class="blog-footer">
+    <p>creat by jehad © 2024</p>
+</footer>
+
+<script>
+    var addCommentForm = document.getElementById('add-comment-form');
+    var comment = document.getElementById('comment');
+    var errorText = document.getElementById('errorText')
+
+    if (addCommentForm) {
+
+        addCommentForm.onsubmit = function() {
+
+            if (comment.value.length < 1) {
+                errorText.textContent = "Comment is empty!"
+                return false;
+            }
+        }
+    }
+
+    const postIdEl = document.getElementById('post-id');
+    const postId = postIdEl.textContent;
+
+    var likeButton = document.getElementById('like-click');
+    var dislikeButton = document.getElementById('dislike-click');
+
+    likeButton.addEventListener('click', likePost, false)
+    dislikeButton.addEventListener('click', dislikePost, false)
+
+    function likePost() {
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+
+        const method='post';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = '/post/' + postId;
+
+
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'likedislike';
+        hiddenField.value = 'like';
+
+        form.appendChild(hiddenField);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
+    function dislikePost() {
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+
+        const method='post';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = '/post/' + postId;
+
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'likedislike';
+        hiddenField.value = 'dislike';
+
+        form.appendChild(hiddenField);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
+    var likeCommentButtons = document.querySelectorAll('.like-comment-btn');
+    var dislikeCommentButton = document.querySelectorAll('.dislike-comment-btn');
+
+    if (likeCommentButtons) {
+        for (i=0; i<likeCommentButtons.length; i++) {
+            likeCommentButtons[i].addEventListener('click', likeComment, false)
+        }
+    }
+
+    if (dislikeCommentButton) {
+        for (i=0; i<dislikeCommentButton.length; i++) {
+            dislikeCommentButton[i].addEventListener('click', dislikeComment, false)
+        }
+    }
+
+    function likeComment(e) {
+        const commentId = e.currentTarget.getAttribute('comment')
+
+        const method='post';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = '/post/' + postId;
+
+        const hiddenField1 = document.createElement('input');
+        hiddenField1.type = 'hidden';
+        hiddenField1.name = 'likedislikecomment';
+        hiddenField1.value = 'like';
+
+        const hiddenField2 = document.createElement('input');
+        hiddenField2.type = 'hidden';
+        hiddenField2.name = 'commentid';
+        hiddenField2.value = commentId;
+
+        form.appendChild(hiddenField1);
+        form.appendChild(hiddenField2);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
+    function dislikeComment(e) {
+        const commentId = e.currentTarget.getAttribute('comment')
+
+        const method='post';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = '/post/' + postId;
+
+        const hiddenField1 = document.createElement('input');
+        hiddenField1.type = 'hidden';
+        hiddenField1.name = 'likedislikecomment';
+        hiddenField1.value = 'dislike';
+
+        const hiddenField2 = document.createElement('input');
+        hiddenField2.type = 'hidden';
+        hiddenField2.name = 'commentid';
+        hiddenField2.value = commentId;
+
+        form.appendChild(hiddenField1);
+        form.appendChild(hiddenField2);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+
+</body>
+</html>
